@@ -75,7 +75,7 @@ jobs:
     environment: ${{ github.ref == 'refs/heads/master' && 'dev' || '' }}
 
     env:
-      PUBLIC_IP: ${{ steps.tf-output.outputs.PUBLIC_IP }}
+      # PUBLIC_IP: ${{ steps.tf-output.outputs.PUBLIC_IP }}
       SSH_PRIVATE_KEY: ${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}
       ENVIRONMENT: ${{ github.ref == 'refs/heads/master' && 'dev' || '' }}
 
