@@ -1,0 +1,21 @@
+# Ignore all local environment files
+backup/
+# Ignore Terraform build and state files
+.terraform/              # Folders anywhere
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl      # File anywhere
+
+# Ignore local tfvars and plans
+**/*.tfvars
+*.tfvars.json
+terraform.tfvars
+*.tfplan
+crash.log
+
+# Ignore local environment files
+**/.terraform/
+**/.terraform.lock.hcl
+
+# Backup files
+backup/*
