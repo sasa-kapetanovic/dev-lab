@@ -67,6 +67,7 @@ jobs:
           IP=$(terraform output -raw public_ip_address)
           echo "PUBLIC_IP=$IP" >> $GITHUB_ENV
           echo "$IP" > public_ip.txt
+          pwd
 
       - name: Upload public IP as artifact
         uses: actions/upload-artifact@v4
