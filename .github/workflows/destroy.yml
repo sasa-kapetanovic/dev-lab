@@ -1,0 +1,31 @@
+name: "Destroy Infrastructure"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  destroy:
+    name: "Terraform Destroy"
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/master' && 'dev' || '' }}
+
+    env:
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+      ENVIRONMENT: ${{ github.ref == 'refs/heads/master' && 'dev' || '' }}
+
+    defaults:
+      run:
+        working-directory: infra/terraform
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.13.1"
+      - run: terraform init -reconfigure -backend-config=backend/$ENVIRONMENT.backend.conf
+      - run: echo "${{ secrets.TFVARS_FILE }}" | base64 -d > $ENVIRONMENT.tfvars
+      - run: terraform destroy -auto-approve -var-file="$ENVIRONMENT.tfvars"
+
