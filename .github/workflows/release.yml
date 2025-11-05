@@ -81,7 +81,6 @@ jobs:
       - name: Generate Ansible inventory
         run: |
           IP="${{ steps.tf-out.outputs.PUBLIC_IP }}"
-          mkdir -p inventory
           cat > inventory/hosts.yaml <<EOF
           ---
           all:
