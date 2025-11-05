@@ -50,6 +50,8 @@ jobs:
     defaults:
       run:
         working-directory: infra/terraform
+    outputs:
+      PUBLIC_IP: ${{ steps.tf-output.outputs.PUBLIC_IP }}
 
     steps:
       - uses: actions/checkout@v3
@@ -90,22 +92,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: "1.13.1"
-      - run: terraform init -reconfigure -backend-config=backend/$ENVIRONMENT.backend.conf
-      - name: Set Output
-        id: tf-output
-        run: |
-          echo "PUBLIC_IP=$(terraform --chdir infra/terraform output -raw public_ip_address)" >> "$GITHUB_OUTPUT"
-
-      - name: Print IP
-        run: |
-          echo "Terraform public IP: ${{ steps.tf-output.outputs.PUBLIC_IP }}"
-
       - name: Generate Ansible inventory
         run: |
-          IP="$PUBLIC_IP"
+          IP=${{ needs.apply.outputs.PUBLIC_IP }}
           cat > inventory/hosts.yaml <<EOF
           ---
           all:
@@ -124,7 +113,7 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           eval "$(ssh-agent -s)"
           ssh-add ~/.ssh/id_ed25519
-          ssh-keyscan ${{ steps.tf-output.outputs.PUBLIC_IP }} >> ~/.ssh/known_hosts
+          ssh-keyscan ${{ needs.apply.outputs.PUBLIC_IP }} >> ~/.ssh/known_hosts
 
       - name: Run Ansible playbook
         run: ansible-playbook -i inventory/hosts.yaml nginx.yml
