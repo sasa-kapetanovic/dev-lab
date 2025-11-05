@@ -27,8 +27,12 @@ resource "azurerm_linux_virtual_machine" "main" {
 
   # SSH Key Setup
   # Needed for Ansible and secure access
-  admin_ssh_key {
-    username   = var.admin_username
-    public_key = var.ssh_public_key
+  dynamic "admin_ssh_key" {
+    for_each = var.ssh_public_keys
+    content {
+      username   = var.admin_username
+      public_key = admin_ssh_key.value
+    }
   }
+
 }

@@ -1,0 +1,7 @@
+---
+all:
+  hosts:
+    web-hy:
+      ansible_port: 22
+      ansible_host: 4.185.203.60
+      ansible_user: ansibleadmin

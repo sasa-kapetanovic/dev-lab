@@ -49,8 +49,8 @@ variable "vm_disk_size" {
   description = "Size of the VM OS disk in GB"
 }
 
-variable "ssh_public_key" {
-  type        = string
-  default = ""
-  description = "SSH public key content"
+variable "ssh_public_keys" {
+  type        = list(string)
+  default     = []
+  description = "List of SSH public key contents to be added to the VM for authentication"
 }
