@@ -78,6 +78,10 @@ jobs:
       # PUBLIC_IP: ${{ steps.tf-output.outputs.PUBLIC_IP }}
       SSH_PRIVATE_KEY: ${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}
       ENVIRONMENT: ${{ github.ref == 'refs/heads/master' && 'dev' || '' }}
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
     defaults:
       run:
@@ -89,6 +93,7 @@ jobs:
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.13.1"
+      - run: terraform init -reconfigure -backend-config=backend/$ENVIRONMENT.backend.conf
       - name: Set Output
         id: tf-output
         run: |
