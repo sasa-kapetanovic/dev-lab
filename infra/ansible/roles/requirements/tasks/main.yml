@@ -1,0 +1,46 @@
+---
+- name: Print all available facts
+  ansible.builtin.debug:
+    var: ansible_facts
+
+- name: Install Language packages
+  apt: 
+    name: language-pack-en 
+    force: yes 
+    state: present
+  tags: packages
+
+- name: Set timezone to Europe/Berlin
+  timezone:
+    name: Europe/Berlin
+
+- name: Install aptitude using apt
+  apt: 
+    name: aptitude 
+    state: latest 
+    update_cache: yes 
+    force_apt_get: yes
+
+- name: Install required system packages
+  apt: 
+    name: "{{ item }}" 
+    state: latest
+    update_cache: yes
+  loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'gnupg-agent', 'net-tools', 'bash-completion', 'resolvconf', 'tree' ]
+
+- name: "Configure resolv.conf"
+  template:
+    src: "resolv.conf.j2"
+    dest: "/etc/resolvconf/resolv.conf.d/head"
+    mode: "0644"
+  become: true
+
+- name: Restart resolvconf System Service
+  service:
+    name: resolvconf
+    state: restarted
+
+- name: Verify resolvconf System Service
+  service:
+    name: resolvconf
+    state: started

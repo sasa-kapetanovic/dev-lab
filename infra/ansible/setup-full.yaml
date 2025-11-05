@@ -1,0 +1,40 @@
+---
+- name: Requirements
+  hosts: 
+    - web-hy
+  strategy: linear
+  remote_user: ansibleadmin
+  become: yes
+  any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
+  roles:
+    - { role: roles/requirements }
+
+- name: Docker CE
+  hosts: 
+    - web-hy
+  strategy: linear
+  remote_user: ansibleadmin
+  become: yes
+  any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
+  roles:
+    - { role: roles/docker/install }
+
+- name: Compose
+  hosts: 
+    - web-hy
+  strategy: linear
+  remote_user: ansibleadmin
+  become: yes
+  any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
+  roles:
+    - { role: roles/compose }
+
+- name: Nginx | Update
+  hosts:
+    - web-hy
+  strategy: linear
+  remote_user: ansibleadmin
+  become: yes
+  any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
+  roles:
+    - { role: roles/nginx }

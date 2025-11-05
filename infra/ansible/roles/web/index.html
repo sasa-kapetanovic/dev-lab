@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROTECTED POC SITE</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="content">
+        <h1>Successfully Authenticated!</h1>
+        <p>This content and all resources are protected by a Reverse Proxy placed in front of Keycloak.</p>
+        
+        <h2>Protected Resources:</h2>
+        <ul>
+            <li>**This HTML Page** (`index.html`)</li>
+            <li>**The Stylesheet** (`style.css`)</li>
+            <li>**The Image Below** (`protected_image.png`)</li>
+            <li>**The Favicon** (`favicon.ico`)</li>
+        </ul>
+
+        <div class="image-container">
+            <img src="protected_image.png" alt="Lock and key icon" title="This image is protected!">
+        </div>
+        
+        <p class="footer">If the Keycloak proxy is working correctly, no file (HTML, CSS, PNG) should be accessible without a valid Keycloak token.</p>
+    </div>
+</body>
+</html>

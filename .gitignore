@@ -1,5 +1,3 @@
-# Ignore all local environment files
-backup/
 # Ignore Terraform build and state files
 .terraform/              # Folders anywhere
 *.tfstate
@@ -12,6 +10,11 @@ backup/
 terraform.tfvars
 *.tfplan
 crash.log
+
+# ignore Log files
+log/
+.log
+.logs
 
 # Ignore local environment files
 **/.terraform/

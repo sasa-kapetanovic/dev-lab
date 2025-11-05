@@ -116,4 +116,4 @@ jobs:
           ssh-keyscan ${{ needs.apply.outputs.PUBLIC_IP }} >> ~/.ssh/known_hosts
 
       - name: Run Ansible playbook
-        run: ansible-playbook -i inventory/hosts.yaml nginx.yml
+        run: ansible-playbook -i inventory/hosts.yaml setup-full.yaml

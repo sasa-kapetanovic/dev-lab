@@ -1,0 +1,45 @@
+---
+- name: Install Requirements
+  apt: 
+    name: "{{ item }}" 
+    state: latest
+    update_cache: yes
+  loop: 
+    - nginx
+##in case of cert
+    # - certbot
+    # - python3-certbot-nginx
+
+# - name: "Sak stage configuration"
+#   template:
+#     src: "../templates/sak-portal.j2"
+#     dest: "/etc/nginx/sites-available/default"
+#     mode: "0644"
+
+#EXAMPLE
+# - name: "Enable custom headers in default configuration"
+#   template:
+#     src: "../templates/sak-porta.j2"
+#     dest: "/etc/nginx/conf.d/default.conf"
+#     mode: "0644"
+
+- name: Nginx | Status
+  shell: nginx -t 
+  register: ngs
+
+- debug:
+    msg: "{{ ngs.stdout.split('\n') }}"
+
+#in case of cert
+# - name: Nginx | https
+#   shell: certbot --nginx -d portal-staging.consulteer.com --agree-tos -m admins@consulteer.com
+
+- name: Restart Nginx
+  service: 
+    name: nginx
+    state: restarted
+
+- name: Verify Nginx
+  service: 
+    name: nginx
+    state: started

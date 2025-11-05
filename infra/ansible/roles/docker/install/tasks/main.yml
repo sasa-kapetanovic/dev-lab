@@ -1,0 +1,56 @@
+---
+- name: Add Docker GPG apt Key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add Docker Repository
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu focal stable
+    state: present
+
+- name: Update apt and install docker-ce
+  apt: 
+    update_cache: yes 
+    name: "{{ item }}" 
+    state: latest
+  loop: ['docker-ce', 'docker-ce-cli', 'containerd.io']
+
+- name: Docker | Network setup
+  template:
+    src: ../templates/daemon.json.j2
+    dest: /etc/docker/daemon.json
+    owner: "root"
+    group: "root"
+    mode: '0644'
+
+- name: DockerUser | Add current Ansible user to docker group
+  become: true
+  user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: yes
+
+- name: Docker | Show version
+  command: docker --version
+  register: docker_version
+  changed_when: false
+
+- debug:
+    msg: "{{ docker_version.stdout }}"
+
+- name: Docker | Show info
+  command: docker info
+  register: docker_info
+  changed_when: false
+
+- debug:
+    msg: "{{ docker_info.stdout_lines }}"
+
+- name: Docker | List check
+  command: docker ps --all
+  register: docker_ps
+  changed_when: false
+
+- debug:
+    msg: "{{ docker_ps.stdout_lines }}"

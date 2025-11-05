@@ -1,0 +1,44 @@
+- include_vars: main.yml
+
+- name: Ensure project dir exists
+  file:
+    path: "{{ project_dir }}"
+    state: directory
+    owner: "{{ run_user }}"
+    group: "{{ run_user }}"
+    mode: "0755"
+
+- name: Docker | Setup (docker-compose.yml)
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ project_dir }}/docker-compose.yml"
+    owner: "{{ run_user }}"
+    group: "{{ run_user }}"
+    mode: "0644"
+
+- name: Docker | Api-configuration (.env)
+  template:
+    src: environments.j2
+    dest: "{{ project_dir }}/.env"
+    owner: "{{ run_user }}"
+    group: "{{ run_user }}"
+    mode: "0644"
+
+- name: Docker | Start
+  become: true
+  become_user: "{{ run_user }}"
+  args:
+    chdir: "{{ project_dir }}"
+  command: docker compose up -d
+
+- name: Docker | Status
+  become: true
+  become_user: "{{ run_user }}"
+  args:
+    chdir: "{{ project_dir }}"
+  command: docker ps
+  register: ds
+  changed_when: false
+
+- debug:
+    msg: "{{ ds.stdout_lines }}"
