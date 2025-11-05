@@ -92,7 +92,8 @@ jobs:
 
       - name: Generate Ansible inventory
         run: |
-          IP="$(cat public_ip.txt)"
+          pwd
+          IP="$(cat ../terraform/public_ip.txt)"
           cat > inventory/hosts.yaml <<EOF
           ---
           all:
