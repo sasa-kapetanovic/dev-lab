@@ -83,7 +83,7 @@ jobs:
 
       - name: Generate Ansible inventory
         run: |
-          IP="${{ apply.steps.tf-output.outputs.PUBLIC_IP }}"
+          IP="$GITHUB_OUTPUT"
           cat > inventory/hosts.yaml <<EOF
           ---
           all:
