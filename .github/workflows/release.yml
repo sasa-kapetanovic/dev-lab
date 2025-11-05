@@ -60,10 +60,19 @@ jobs:
       - run: echo "${{ secrets.TFVARS_FILE }}" | base64 -d > $ENVIRONMENT.tfvars
       - run: terraform apply -auto-approve -var-file="$ENVIRONMENT.tfvars"
       - run: PUBLIC_IP=$(terraform output -raw public_ip_address)
-      - name: Set Output
-        id: tf-output
+
+      - name: Get public IP output
+        id: tf_output
         run: |
-          echo "PUBLIC_IP=$(terraform output -raw public_ip_address)" >> "$GITHUB_OUTPUT"
+          IP=$(terraform output -raw public_ip_address)
+          echo "PUBLIC_IP=$IP" >> $GITHUB_ENV
+          echo "$IP" > public_ip.txt
+
+      - name: Upload public IP as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-public-ip
+          path: public_ip.txt
 
   configure-server:
     name: "Configure Server with Ansible"
@@ -83,7 +92,7 @@ jobs:
 
       - name: Generate Ansible inventory
         run: |
-          IP="$GITHUB_OUTPUT"
+          IP="$(cat public_ip.txt)"
           cat > inventory/hosts.yaml <<EOF
           ---
           all:
