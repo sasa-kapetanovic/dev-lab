@@ -60,4 +60,4 @@ jobs:
       - run: echo "${{ secrets.TFVARS_FILE }}" | base64 -d > $ENVIRONMENT.tfvars
       - run: terraform apply -auto-approve -var-file="$ENVIRONMENT.tfvars"
       - run: terraform output -json
-      - run: echo "PUBLIC_IP=$(terraform -chdir=infra/terraform output -raw public_ip_address)" >> "$GITHUB_OUTPUT"
+      - run: echo "PUBLIC_IP=$(terraform output -raw public_ip_address)" >> "$GITHUB_OUTPUT"
