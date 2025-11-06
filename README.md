@@ -1,5 +1,7 @@
 ## DEV-LAB
 
+A fully automated environment for authentication, infrastructure provisioning, and web service deployment using Keycloak, OAuth2 Proxy, Nginx, Terraform, Ansible, and containerized components. It provides secure access control by protecting the web application through OAuth2 and Keycloak integration, ensuring authenticated and authorized access to web page.
+
 ### Local Development
 
 [Docker Compose Docs](docker/DOCKER.md)  
@@ -29,6 +31,7 @@ OAuth2 Proxy was introduced to handle authentication and authorization flows wit
 </details>
 
 ### Keycloak setup proccess
+Realm user is demo and password is demopass.
 <details>
   <summary><strong>Keycloak steps</strong></summary>
 The process I followed when creating the Keycloak realm was as follows:
@@ -63,7 +66,7 @@ Github Secrets
 
 [Pre Setup](bin/README.md)  
 [Terraform-docs](infra/terraform/TF_DOCS.md)  
-[TF VM Azure](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_virtual_machine)
+
 ### Ansible
 To configure and deploy the environment using Ansible, run the following command:
 ```bash
@@ -71,8 +74,41 @@ ansible-playbook -i infra/ansible/inventory/hosts.yaml infra/ansible/setup-full.
 ```
 [Ansible Docs](infra/ansible/ANSIBLE_DOCS.md)
 
+## Environment Setup Steps
+1. Create Environment on GitHub repository
+1. Generate SSH key and add it as secret `ANSIBLE_SSH_PRIVATE_KEY` on GitHub repo
+1. Login to your subscription
+1. Register provider `Microsoft.Storage`
+1. Create storage account on Azure
+```
+resource_group_name    =   RESOURCE_GROUP_NAME  
+storage_account_name   =   STORAGE_ACCOUNT_NAME  
+container_name         =   CONTAINER_NAME  
+key                    =   ${ENV}.tfstate  
+```
+5. Add the output to `infra/terraform/backend/$ENV.tfstate`
+1. Create RBAC for Terraform and add secrets to GitHub Environment   
+```
+ARM_CLIENT_ID         corresponds to "appId" from SP  
+ARM_CLIENT_SECRET     corresponds to "password" from SP  
+ARM_SUBSCRIPTION_ID  
+ARM_TENANT_ID    
+```
+7. Add TFVARS_FILE to Github Secrets
+```
+rg_name         =  string
+location        =  string
+admin_username  =  string
+vm_name         =  string
+vm_disk_size    =  number
+subscription_id =  string
+ssh_public_keys =  list(string)
+``` 
+8. Push to desired brach
+
 ### Refs
 
 [Keycloak Realm](https://www.keycloak.org/getting-started/getting-started-docker)  
 [Keycloak](https://www.keycloak.org/documentation)  
 [Oauth2](https://oauth2-proxy.github.io/oauth2-proxy/)  
+[Terraform VM Azure](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_virtual_machine)
