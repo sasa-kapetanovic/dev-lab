@@ -2,19 +2,38 @@ name: "Destroy Infrastructure"
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - develop
+      - feature
+      - master
+    tags:
+      - 'v*'
 
 jobs:
   destroy:
     name: "Terraform Destroy"
     runs-on: ubuntu-latest
-    environment: ${{ github.ref == 'refs/heads/master' && 'dev' || '' }}
+    environment: 
+      ${{ 
+        github.ref == 'refs/heads/develop' && 'dev' || 
+        github.ref == 'refs/heads/feature' && 'dev' || 
+        github.ref == 'refs/heads/main' && 'dev' || 
+        startsWith(github.ref, 'refs/tags/') && 'dev' 
+      }}
 
     env:
       ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
       ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
       ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-      ENVIRONMENT: ${{ github.ref == 'refs/heads/master' && 'dev' || '' }}
+      ENVIRONMENT: 
+        ${{ 
+          github.ref == 'refs/heads/develop' && 'dev' || 
+          github.ref == 'refs/heads/feature' && 'dev' || 
+          github.ref == 'refs/heads/main' && 'dev' || 
+          startsWith(github.ref, 'refs/tags/') && 'dev' 
+        }}
 
     defaults:
       run:
