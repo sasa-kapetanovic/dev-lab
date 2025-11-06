@@ -27,9 +27,16 @@
 - name: DockerUser | Add current Ansible user to docker group
   become: true
   user:
-    name: "{{ ansible_user }}"
+    name: "{{ ansible_user | default('ubuntu') }}"
     groups: docker
     append: yes
+
+# - name: DockerUser | Group
+#   shell: usermod -aG docker {{ ansible_user }}
+
+# - name: DockerGroup | newgroup docker
+#   become: true
+#   shell: newgrp docker
 
 - name: Docker | Show version
   command: docker --version
