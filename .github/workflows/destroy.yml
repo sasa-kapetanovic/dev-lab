@@ -2,13 +2,6 @@ name: "Destroy Infrastructure"
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - develop
-      - feature
-      - master
-    tags:
-      - 'v*'
 
 jobs:
   destroy:
