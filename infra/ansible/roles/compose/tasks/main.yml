@@ -24,6 +24,66 @@
     group: "{{ run_user }}"
     mode: "0644"
 
+- name: Docker | Copy Keycloak Realm
+  become: true
+  become_user: "{{ run_user }}"
+  template:
+    src: realm.j2
+    dest: "{{ project_dir }}/realm.json"
+    owner: "{{ run_user }}"
+    group: "{{ run_user }}"
+    mode: "0644"
+
+- name: Copy Keycloak Theme to remote server
+  become: true
+  become_user: "{{ run_user }}"
+  copy:
+    src: themes/
+    dest: "{{ project_dir }}/themes/"
+    owner: "{{ run_user }}"
+    group: "{{ run_user }}"
+    mode: '0755'
+
+- name: Ensure web directory exists
+  become: true
+  become_user: "{{ run_user }}"
+  file:
+    path: "{{ project_dir }}/web"
+    state: directory
+    mode: '0755'
+
+- name: Copy static web files to server
+  become: true
+  become_user: "{{ run_user }}"
+  copy:
+    src: "{{ item }}"
+    dest: "{{ project_dir }}/web/{{ item }}"
+    mode: '0644'
+  with_items:
+    - favicon.ico
+    - index.html
+    - protected_image.png
+    - style.css
+
+- name: Ensure nginx directory exists
+  become: true
+  become_user: "{{ run_user }}"
+  file:
+    path: "{{ project_dir }}/nginx"
+    state: directory
+    mode: '0755'
+
+- name: Copy static web files to server
+  become: true
+  become_user: "{{ run_user }}"
+  copy:
+    src: "default.conf"
+    dest: "{{ project_dir }}/nginx/default.conf"
+    mode: '0644'
+
+- name: Docker | Set Server IP in as variable
+  shell: IP_ADDRESS=$(hostname -I | awk '{print $1}') >> .env
+
 - name: Docker | Start
   become: true
   become_user: "{{ run_user }}"

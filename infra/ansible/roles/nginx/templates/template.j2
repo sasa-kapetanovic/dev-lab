@@ -1,0 +1,89 @@
+server {
+
+    server_name _;
+    # Oauth2 Proxy
+    location / {
+        add_header Access-Control-Allow-Origin *;
+        proxy_pass http://127.0.0.1:4180;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Host $http_host;
+        proxy_connect_timeout 300;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        chunked_transfer_encoding off;
+    }
+
+    location ~* ^/oauth2/.+\.(?:css|js|mjs|map|png|jpe?g|gif|webp|svg|ico|bmp|tiff|ttf|otf|eot|woff2?)$ {
+        proxy_pass http://127.0.0.1:4180;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        expires 7d;
+        add_header Cache-Control "public, max-age=604800, immutable";
+    }
+
+    # Keycloak
+    location ~* ^/resources/.+\.(?:css|js|mjs|map|png|jpe?g|gif|webp|svg|ico|bmp|tiff|ttf|otf|eot|woff2?)$ {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        expires 7d;
+        add_header Cache-Control "public, max-age=604800, immutable";
+    }
+
+    location /resources/ {
+        proxy_pass http://127.0.0.1:8080/resources/;
+        proxy_set_header Host $host:$server_port;
+        proxy_set_header X-Forwarded-Host $server_name;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_connect_timeout 15;
+        client_max_body_size 100M;
+        proxy_http_version 1.1;
+    }
+
+    location /realms/dev-lab/ {
+        proxy_pass http://127.0.0.1:8080/realms/dev-lab/;
+        proxy_set_header Host $host:$server_port;
+        proxy_set_header X-Forwarded-Host $server_name;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_connect_timeout 15;
+        client_max_body_size 100M;
+        proxy_http_version 1.1;
+    }
+
+    # Web nginx app
+    location ~* \.(?:css|js|mjs|map|png|jpe?g|gif|webp|svg|ico|bmp|tiff|ttf|otf|eot|woff2?)$ {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        expires 7d;
+        add_header Cache-Control "public, max-age=604800, immutable";
+    }
+
+    # Allow Keycloak Admin Console from specific IP
+    # Admin UI
+    location ^~ /admin/ {
+        allow 77.243.31.251;
+        deny  all;
+
+        proxy_pass http://127.0.0.1:8080/admin/;
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_http_version 1.1;
+        proxy_read_timeout  90s;
+        proxy_connect_timeout 30s;
+    }
+}
