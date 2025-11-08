@@ -132,7 +132,7 @@ jobs:
 
       - name: Generate Ansible inventory
         run: |
-          grep -rl --exclude-dir=.git "IP_ADDRESS" infra/ansible | xargs sed -i 's/IP_ADDRESS/${{ needs.apply.outputs.PUBLIC_IP }}/g'
+          grep -rl --exclude-dir=.git "IP_ADDRESS" . | xargs sed -i 's/IP_ADDRESS/${{ needs.apply.outputs.PUBLIC_IP }}/g'
       - name: Setup SSH key for Ansible
         run: |
           mkdir -p ~/.ssh
