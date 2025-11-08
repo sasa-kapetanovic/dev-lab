@@ -3,5 +3,5 @@ all:
   hosts:
     web-hy:
       ansible_port: 22
-      ansible_host: 4.185.158.86
+      ansible_host: IP_ADDRESS
       ansible_user: ansibleadmin

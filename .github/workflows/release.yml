@@ -132,18 +132,7 @@ jobs:
 
       - name: Generate Ansible inventory
         run: |
-          IP=${{ needs.apply.outputs.PUBLIC_IP }}
-          cat > inventory/hosts.yaml <<EOF
-          ---
-          all:
-            hosts:
-              web-hy:
-                ansible_port: 22
-                ansible_host: ${IP}
-                ansible_user: ansibleadmin
-          EOF
-          echo "Inventory written with IP: ${IP}"
-
+          grep -rl --exclude-dir=.git "IP_ADDRESS" infra/ansible | xargs sed -i 's/IP_ADDRESS/${{ needs.apply.outputs.PUBLIC_IP }}/g'
       - name: Setup SSH key for Ansible
         run: |
           mkdir -p ~/.ssh

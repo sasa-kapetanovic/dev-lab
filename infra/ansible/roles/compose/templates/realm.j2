@@ -626,7 +626,7 @@
         "clientId": "demo-nginx",
         "name": "Demo Nginx (oauth2-proxy)",
         "description": "",
-        "rootUrl": "http://4.185.158.86",
+        "rootUrl": "http://IP_ADDRESS",
         "adminUrl": "",
         "baseUrl": "",
         "surrogateAuthRequired": false,
@@ -635,10 +635,10 @@
         "clientAuthenticatorType": "client-secret",
         "secret": "CHANGE_ME_CLIENT_SECRET",
         "redirectUris": [
-          "http://4.185.158.86/oauth2/callback"
+          "http://IP_ADDRESS/oauth2/callback"
         ],
         "webOrigins": [
-          "http://4.185.158.86"
+          "http://IP_ADDRESS"
         ],
         "notBefore": 0,
         "bearerOnly": false,
@@ -654,7 +654,7 @@
           "realm_client": "false",
           "oidc.ciba.grant.enabled": "false",
           "backchannel.logout.session.required": "true",
-          "backchannel.logout.url": "http://4.185.158.86",
+          "backchannel.logout.url": "http://IP_ADDRESS",
           "standard.token.exchange.enabled": "false",
           "post.logout.redirect.uris": "+",
           "display.on.consent.screen": "false",
@@ -1444,8 +1444,8 @@
       "xContentTypeOptions": "nosniff",
       "referrerPolicy": "",
       "xRobotsTag": "none",
-      "xFrameOptions": "ALLOW-FROM 4.185.158.86",
-      "contentSecurityPolicy": "frame-src 'self'; frame-ancestors 'self' '4.185.158.86'; object-src 'none';",
+      "xFrameOptions": "ALLOW-FROM IP_ADDRESS",
+      "contentSecurityPolicy": "frame-src 'self'; frame-ancestors 'self' 'IP_ADDRESS'; object-src 'none';",
       "strictTransportSecurity": "max-age=31536000; includeSubDomains"
     },
     "smtpServer": {},
