@@ -75,6 +75,16 @@ ansible-playbook -i infra/ansible/inventory/hosts.yaml infra/ansible/setup-full.
 [Ansible Docs](infra/ansible/ANSIBLE_DOCS.md)
 
 ## Environment Setup Steps
+We are currently using only the dev environment for this example.  
+If you add a new environment later, make sure to update this logic in your workflow files accordingly.  
+```
+${{ 
+  github.ref == 'refs/heads/develop' && 'dev' || 
+  github.ref == 'refs/heads/feature' && 'dev' || 
+  github.ref == 'refs/heads/main' && 'dev' || 
+  startsWith(github.ref, 'refs/tags/') && 'dev' 
+}}
+```
 1. Create Environment on GitHub repository
 1. Generate SSH key and add it as secret `ANSIBLE_SSH_PRIVATE_KEY` on GitHub repo
 1. Login to your subscription
@@ -94,7 +104,9 @@ ARM_CLIENT_SECRET     corresponds to "password" from SP
 ARM_SUBSCRIPTION_ID  
 ARM_TENANT_ID    
 ```
-7. Add TFVARS_FILE to Github Secrets
+7. Add TFVARS_FILE to Github Secrets  
+Example for dev.  
+Content of dev.tfvars:
 ```
 rg_name         =  string
 location        =  string
@@ -104,6 +116,12 @@ vm_disk_size    =  number
 subscription_id =  string
 ssh_public_keys =  list(string)
 ``` 
+* base64 -w0 infra/terraform/dev.tfvars > dev.tfvars
+* Then open your GitHub repository, go to Settings, select Environments, choose the desired environment, and add a new secret:  
+```
+Name:  TFVARS_FILE
+Value: Paste the Base64-encoded content of dev.tfvars
+```
 8. Push to desired brach
 
 ### Refs

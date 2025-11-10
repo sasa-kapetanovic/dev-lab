@@ -20,5 +20,9 @@ log/
 **/.terraform/
 **/.terraform.lock.hcl
 
+# Ignore IDE and editor files
+.vscode/
+.idea/
+
 # Backup files
 backup/*
